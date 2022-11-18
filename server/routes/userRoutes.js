@@ -5,9 +5,8 @@ const upload = require("../utils/multer");
 const bcrypt = require('bcryptjs')
 const {generateToken,authMiddleWare} = require('../utils/auth')
 const { body, validationResult } = require("express-validator");
-const { findOne, validate } = require("../models/product");
 userRouter.post(
-  "/createUser",
+  "/register",
   body("email").isEmail().withMessage("mail not valid"),
   body("password")
     .isLength({ min: 8 })

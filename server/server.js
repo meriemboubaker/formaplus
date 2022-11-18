@@ -2,14 +2,13 @@ require("dotenv").config();
 const express = require("express");
 
 const path = require("path")
-const app = express();
-const port = 5000;
+const app = express()
 const testRouter = require("./routes/testRoutes");
 const productRouter = require("./routes/productRoutes")
 const userRouter = require("./routes/userRoutes")
 const mongoose = require("mongoose");
 mongoose
-  .connect(process.env.mongodb)
+  .connect(process.env.MONGO)
   .then(() => {
     console.log("mongoose connected");
   })
@@ -21,5 +20,5 @@ app.use("/users",userRouter)
 app.use("/uploads",express.static(path.join(__dirname,"uploads")))
 console.log(process.env.PORT);
 app.listen(process.env.PORT, () => {
-  console.log(`server running on port ${port}`);
+  console.log(`server running on port ${process.env.PORT}`);
 });
