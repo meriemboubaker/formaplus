@@ -9,6 +9,7 @@ export const createProduct = createAsyncThunk(
       const res = await axios.post("/products/createproduct",info,{
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
+      
       return res.data;
     } catch (error) {
       return rejectWithValue(
@@ -23,7 +24,7 @@ export const fetchProductList = createAsyncThunk(
   "product/fetchProductList",
   async (info, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/products/getTotalProducts`, {
+      const res = await axios.get(`/products/getProducts`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       return res.data;
@@ -41,7 +42,7 @@ export const fetchProduct = createAsyncThunk(
   "product/fetchProduct",
   async (info, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/products/product/${info}`, {
+      const res = await axios.get(`/products/getProduct/${info}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       return res.data;
@@ -79,7 +80,7 @@ export const updateProduct = createAsyncThunk(
       const formData = new FormData();
     formData.append("image", info.file);
     formData.append("info", JSON.stringify(info.data));
-      const res = await axios.put(`/products/updateproduct/${info.id}`, formData, {
+      const res = await axios.put(`/products/updateProduct/${info.id}`, formData, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       dispatch(fetchProduct(info.id));

@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import {
-    updateProduct
-
+    updateProduct,
+   fetchProduct
 } from "../redux/productSlice";
-
+import {useParams} from 'react-router-dom'
 const styles = {
     container: {
         display: "flex",
@@ -31,19 +31,20 @@ const styles = {
     },
 };
 const CreateProduct = () => {
-
-    const [selectedImage, setSelectedImage] = useState();
-    const [productlist , setproductlist] = useState({})
-
-
-    const dispatch = useDispatch();
     const productState = useSelector((state) => state.product);
-
     const {
         product,
         loading, errors
 
     } = productState;
+    const [selectedImage, setSelectedImage] = useState();
+    const [productlist , setproductlist] = useState({})
+ const param = useParams()
+ const id = param.id
+console.log(id)
+    const dispatch = useDispatch();
+
+
     const imageChange = (e) => {
         if (e.target.files && e.target.files.length > 0) {
             setSelectedImage(e.target.files[0]);
@@ -61,10 +62,12 @@ const CreateProduct = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
         dispatch(
-            updateProduct({ productlist, file: selectedImage })
+            updateProduct({id:id, data:productlist, file: selectedImage })
         );
     };
-
+useEffect(()=>{
+    dispatch(fetchProduct(id))
+},[])
     return (
 
         <form onSubmit={(e)=>handleSubmit(e)}>
@@ -80,7 +83,7 @@ const CreateProduct = () => {
                         />
                     </div>
                 )}
-                {selectedImage && (
+                {selectedImage ? (
                     <div style={styles.preview}>
                         <img
                             src={URL.createObjectURL(selectedImage)}
@@ -92,7 +95,18 @@ const CreateProduct = () => {
                             {/*   <FontAwesomeIcon icon={faTrashAlt} /> */}
                         </button>
                     </div>
-                )}
+                ):
+                product?.image?(<div style={styles.preview}>
+                <img
+                    src={product?.image?.slice(6)}
+                    style={styles.image}
+                    alt="Thumb"
+                />
+
+                <button onClick={removeSelectedImage} style={styles.delete}>
+                    {/*   <FontAwesomeIcon icon={faTrashAlt} /> */}
+                </button>
+            </div>):null}
             </div>
 
             <div className="mb-1 d-flex flex-column justify-content-left">
@@ -110,6 +124,7 @@ const CreateProduct = () => {
                     name="name"
                     required
                     onChange={(e) => handleChange(e)}
+                    value={product?.name}
                 />
             </div>
 
@@ -130,6 +145,7 @@ const CreateProduct = () => {
                     name="quantity"
                     required
                     onChange={(e) => handleChange(e)}
+                    value={product?.quantity}
                 />
             </div>
 
