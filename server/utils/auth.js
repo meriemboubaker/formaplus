@@ -11,10 +11,13 @@ const generateToken= (user) => {
 }
 const authMiddleWare = async (req,res,next) =>{
      const authorization = req.headers.authorization
+     console.log("auth",req.headers.authorization)
      if(authorization){
         const token = authorization.slice(7, authorization.length)
+        console.log(token)
      jwt.verify(token , process.env.SECRET,(err,decode)=>{
         if(err){
+            console.log(err)
             return res.status(401).send({msg:"user not allowed"})
         }
         else{

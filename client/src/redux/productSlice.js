@@ -13,9 +13,8 @@ export const createProduct = createAsyncThunk(
       return res.data;
     } catch (error) {
       return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
-          : error.response.data.errors.password.msg
+        error.response.data.msg
+        
       );
     }
   }
@@ -30,9 +29,8 @@ export const fetchProductList = createAsyncThunk(
       return res.data;
     } catch (error) {
         return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
-          : error.response.data.errors.password.msg
+        error.response.data.msg
+        
       );
     }
   }
@@ -48,9 +46,8 @@ export const fetchProduct = createAsyncThunk(
       return res.data;
     } catch (error) {
         return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
-          : error.response.data.errors.password.msg
+        error.response.data.msg
+        
       );
     }
   }
@@ -59,16 +56,15 @@ export const deleteProduct = createAsyncThunk(
   "product/deleteProduct",
   async (info, { rejectWithValue,dispatch }) => {
     try {
-      const res = await axios.delete(`/products/deleteproduct/${info.id}`, {
+      const res = await axios.delete(`/products/deleteproduct/${info}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       dispatch(fetchProductList())
       return res.data;
     } catch (error) {
         return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
-          : error.response.data.errors.password.msg
+        error.response.data.msg
+        
       );
     }
   }
@@ -87,9 +83,8 @@ export const updateProduct = createAsyncThunk(
       return res.data;
     } catch (error) {
         return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
-          : error.response.data.errors.password.msg
+        error.response.data.msg
+        
       );;
     }
   }
@@ -105,7 +100,13 @@ const productSlice = createSlice({
     errors:null
     
   },
- 
+ reducers:{
+  clearState  : (state,action)=>{
+    state.product = null;
+    state.loading = null;
+    state.errors=null
+  }
+ },
   extraReducers: {
     [createProduct.pending]: (state) => {
       state.loading = true;
@@ -172,5 +173,5 @@ const productSlice = createSlice({
 
   },
 });
-
+export const { clearState } = productSlice.actions;
 export default productSlice.reducer;

@@ -39,6 +39,7 @@ const CreateProduct = () => {
     } = productState;
     const [selectedImage, setSelectedImage] = useState();
     const [productlist , setproductlist] = useState({})
+    const [success , setSuccess] = useState(false)
  const param = useParams()
  const id = param.id
 console.log(id)
@@ -63,14 +64,16 @@ console.log(id)
         e.preventDefault()
         dispatch(
             updateProduct({id:id, data:productlist, file: selectedImage })
-        );
+        ).then(()=>{
+            setSuccess(true)
+        });
     };
 useEffect(()=>{
     dispatch(fetchProduct(id))
 },[])
     return (
 
-        <form onSubmit={(e)=>handleSubmit(e)}>
+        <form className="container" onSubmit={(e)=>handleSubmit(e)}>
             <div style={styles.container}>
                 {!selectedImage && (
                     <div className="upload_image mt-4 mb-4 mx-auto">
@@ -162,7 +165,7 @@ useEffect(()=>{
                     {errors}
                 </div>
             )}
-            {product && (
+            {success && (
                 <div className="alert alert-success" role="alert">
                     product Créé avec succés !
                 </div>

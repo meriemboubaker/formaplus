@@ -5,12 +5,12 @@ export const postNewUser = createAsyncThunk(
   "user/postNewUser",
   async (info, { rejectWithValue }) => {
     try {
-    const res = await axios.post("/users/register", info.userInfo);
+    const res = await axios.post("/users/register", info.user);
       return res.data;
     } catch (error) {
       return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
+        error.response.data.msg
+          ? error.response.data.msg
           : error?.response?.data?.errors?.password?.msg
           ? error?.response?.data?.errors?.password?.msg
           : error?.response?.data?.errors?.username?.msg
@@ -26,18 +26,17 @@ export const getUser = createAsyncThunk(
   async (info, { rejectWithValue, dispatch }) => {
     try {
       const res = await axios.get(
-        "/users/user",
+        `/users/getUser/${info}`,
       {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       }
       );
-    
+
       return res.data;
     } catch (error) {
       return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
-          : error.response.data.errors.password.msg
+        error.response.data.msg
+      
       );
     }
   }
@@ -48,12 +47,46 @@ export const login = createAsyncThunk(
   async (info, { rejectWithValue }) => {
     try {
       const res = await axios.post("/users/login", info);
+      console.log(res.data)
       return res.data;
     } catch (error) {
       return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
-          : error.response.data.errors.password.msg
+        error.response.data.msg
+   
+      );
+    }
+  }
+);
+export const loginpassport = createAsyncThunk(
+  "user/loginpassport",
+  async (info, { rejectWithValue }) => {
+    try {
+      const res = await axios.post("/users/loginpassport", info.userInfo);
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response.data.msg
+        
+      );
+    }
+  }
+);
+
+export const getUserPassport = createAsyncThunk(
+  "user/getUserPassport",
+  async (info, { rejectWithValue, dispatch }) => {
+    try {
+      const res = await axios.get(
+        "/users/user",
+        { withCredentials: true },
+   
+        
+      );
+     return res.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response.data.msg
+      
       );
     }
   }
@@ -67,20 +100,13 @@ export const logout = createAsyncThunk(
       {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       },
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Credentials": true,
-          },
-        }
+        
       );
       return res.data;
     } catch (error) {
       return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
-          : error.response.data.errors.password.msg
+        error.response.data.msg
+        
       );
     }
   }
@@ -90,163 +116,30 @@ export const updateUser = createAsyncThunk(
   "user/updateUser",
   async (info, { rejectWithValue, dispatch }) => {
     try {
-      const res = await axios.put(`/users/update/${info.id}`, info.data, {
+      const res = await axios.put(`/users/updateUser/${info.id}`, info.data, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      dispatch(getUser());
+      dispatch(getUser(info.id));
       return res.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
-          : error.response.data.errors.password.msg
-      );
-    }
-  }
-);
-export const updatePassword = createAsyncThunk(
-  "user/updatePassword",
-  async (info, { rejectWithValue, dispatch }) => {
-    try {
-      const res = await axios.put(
-        `/users/updatePassword/${info.id}`,
-        info.data,
-      {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      },
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Credentials": true,
-          },
-        }
-      );
-      dispatch(getUser());
-      return res.data;
-    } catch (error) {
-      console.log(error)
       return rejectWithValue(
         error.response.data.msg
-        ? error.response.data.msg
-        : error?.response?.data?.errors?.password?.msg
-        ? error?.response?.data?.errors?.password?.msg:null
-
-      );
-    }
-  }
-);
-export const updateImage = createAsyncThunk(
-  "user/addnewpicture",
-  async (info, { rejectWithValue, dispatch }) => {
-    const formData = new FormData();
-    formData.append("image", info.file);
-    try {
-      const res = await axios.put(
-        `/users/image/${info.id}`,
-        formData,
-      {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      },
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Credentials": true,
-          },
-        }
-      );
-      dispatch(getUser());
-      return res.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
-          : error.response.data.errors.password.msg
+          
       );
     }
   }
 );
 
-export const createCredit = createAsyncThunk(
-  "user/createCredit",
-  async (info, { rejectWithValue, dispatch }) => {
-    try {
-      const res = await axios.post("/users/createCredit", info);
-      dispatch(getUser());
 
-      return res.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
-          : error.response.data.errors.password.msg
-      );
-    }
-  }
-);
-export const updateBookmarks = createAsyncThunk(
-  "bookmarks/updateBookmarks",
-  async (info, { rejectWithValue, dispatch }) => {
-    try {
-      const res = await axios.put(
-        `/users/updateBookmarks/${info.id}`,
-        info.data,
-     {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      }
-      );
-      dispatch(getUser());
-      return res.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
-          : error.response.data.errors.password.msg
-      );
-    }
-  }
-);
-export const deleteBookmarks = createAsyncThunk(
-  "bookmarks/deleteBookmarks",
-  async (info, { rejectWithValue, dispatch }) => {
-    try {
-      const res = await axios.put(
-        `/users/deleteBookmarks/${info.id}`,
-        info.data,
-     {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      }
-      );
-      dispatch(getUser());
-      return res.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response.data.message
-          ? error.response.data.message
-          : error.response.data.errors.password.msg
-      );
-    }
-  }
-);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
     montant: null,
-    registerErrors: null,
-    registerLoading: false,
-    loginErrors: null,
-    loading: false,
-    connexionLoading: false,
-    updateBookmarksErrors: null,
-    updateBookmarksLoading: false,
+    loading:false,
     errors: false,
-    show: null,
-    showModal: null,
-    updateShow:null,
-    updateErrors:null,
-    updateLoading:false,
-    userInfo: JSON.parse(localStorage.getItem("user")),
+    
+    user: JSON.parse(localStorage.getItem("user")),
     isAuth: Boolean(localStorage.getItem("isAuth")),
   },
  
@@ -255,84 +148,108 @@ const userSlice = createSlice({
       state.loading = true;
     },
     [postNewUser.fulfilled]: (state, action) => {
-      state.userInfo = action.payload.user;
+      state.user = action.payload.user;
       state.isAuth = action.payload.isAuth;
       state.loading = false;
-      state.registerErrors = null;
+      state.errors = null;
     },
     [postNewUser.rejected]: (state, action) => {
-      state.registerErrors = action.payload;
+      state.errors = action.payload;
       state.loading = false;
       state.isAuth = false;
     },
     [login.pending]: (state) => {
-      state.connexionLoading = true;
+      state.loading = true;
     },
     [login.fulfilled]: (state, action) => {
-      state.connexionLoading = false;
+      state.loading = false;
       state.errors = null;
+      state.user = action.payload.user
+      state.isAuth = true
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
+      localStorage.setItem("token", action.payload.token);
+      localStorage.setItem("isAuth", true);
     },
     [login.rejected]: (state, action) => {
-      state.loginErrors = action.payload;
+      state.errors = action.payload;
       state.isAuth = false;
-      state.connexionLoading = false;
+      state.loading = false;
+    },
+    [loginpassport.pending]: (state) => {
+      state.loading = true;
+    },
+    [loginpassport.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.errors = null;
+    },
+    [loginpassport.rejected]: (state, action) => {
+      state.errors = action.payload;
+      state.isAuth = false;
+      state.loading = false;
     },
     [getUser.pending]: (state) => {
-      state.connexionLoading = true;
+      state.loading = true;
     },
     [getUser.fulfilled]: (state, action) => {
-      state.userInfo = action.payload.user;
+      state.user = action.payload;
+      localStorage.setItem("user", JSON.stringify(action.payload));
+      state.errors = null;
+      state.loading = false;
+    },
+    [getUser.rejected]: (state, action) => {
+      localStorage.setItem("user", null);
+      localStorage.setItem("token", null);
+      localStorage.setItem("isAuth", false);
+      state.errors = action.payload;
+      state.loading = false;
+    },
+    [getUserPassport.pending]: (state) => {
+      state.loading = true;
+    },
+    [getUserPassport.fulfilled]: (state, action) => {
+      state.user = action.payload.user;
       state.isAuth = action.payload.isAuth;
       localStorage.setItem("user", JSON.stringify(action.payload.user));
       localStorage.setItem("isAuth", action.payload.isAuth);
-      state.loginErrors = null;
-      state.connexionLoading = false;
+      state.errors = null;
+      state.connexion = false;
+      state.loading = false;
     },
-    [getUser.rejected]: (state, action) => {
+    [getUserPassport.rejected]: (state, action) => {
       localStorage.setItem("user", JSON.stringify(null));
       localStorage.setItem("isAuth", false);
-      state.loginErrors = action.payload;
-      state.connexionLoading = false;
+      state.errors = action.payload;
+      state.connexion = false;
+      state.loading = false;
     },
     [logout.pending]: (state) => {
-      state.connexionLoading = true;
+      state.loading = true;
     },
     [logout.fulfilled]: (state, action) => {
-      state.userInfo = null;
+      state.user = null;
       state.isAuth = false;
-      state.loginErrors = null;
-      state.connexionLoading = false;
+      state.errors = null;
+      state.loading = false;
       localStorage.setItem("user", null);
       localStorage.setItem("isAuth", false);
     },
     [logout.rejected]: (state, action) => {
-      state.loginErrors = action.payload;
-      state.connexionLoading = false;
+      state.errors = action.payload;
+      state.loading = false;
     },
     [updateUser.pending]: (state) => {
-      state.updateLoading = true;
+      state.loading = true;
     },
     [updateUser.fulfilled]: (state, action) => {
-      state.updateLoading = false;
-      state.updateErrors = null;
-      state.updateShow =true
+      state.loading = false;
+      state.errors = null;
+   
     },
     [updateUser.rejected]: (state, action) => {
-      state.updateErrors = action.payload;
-      state.updateLoading = false;
+      state.errors = action.payload;
+      state.loading = false;
     },
-    [updatePassword.pending]: (state) => {
-      state.updateLoading = true;
-    },
-    [updatePassword.fulfilled]: (state, action) => {
-      state.updateLoading = false;
-      state.updateErrors = null;
-      state.updateShow=true;
-    },
-    [updatePassword.rejected]: (state, action) => {
-      state.updateErrors = action.payload;
-      state.updateLoading = false;
-    },
+   
    
   },
 });

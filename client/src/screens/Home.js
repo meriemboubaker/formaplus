@@ -1,6 +1,6 @@
 import {useEffect} from 'react'
 import { useSelector, useDispatch } from "react-redux";
-import { createProduct , fetchProductList } from "../redux/productSlice";
+import { createProduct , deleteProduct, fetchProductList } from "../redux/productSlice";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import {useNavigate} from "react-router-dom"
@@ -13,15 +13,7 @@ const Home = () => {
   },[])
   return (
     <div className="container">
-      <button
-        onClick={() =>
-          dispatch(createProduct()).then((res) =>
-            navigate(`/createProduct/${res.payload._id}`)
-          )
-        }
-      >
-        create product
-      </button>
+    
       <div className="d-flex flex-wrap">
       {products?.map((elm) => (
         <Card style={{ width: "18rem", margin:"10px" }}>
@@ -33,7 +25,9 @@ const Home = () => {
               bulk of the card's content.
             </Card.Text>
             <Button variant="primary" onClick={()=>{navigate(`/product/${elm._id}`)}}>see details</Button>
-            <Button variant="primary" onClick={()=>{navigate(`/createProduct/${elm._id}`)}}>edit</Button>
+            <Button variant="info" onClick={()=>{navigate(`/createProduct/${elm._id}`)}}>edit</Button>
+            <Button variant="danger" onClick={()=>{dispatch(deleteProduct(elm._id)).then(()=>{  dispatch(fetchProductList())})}}>delete</Button>
+            
           </Card.Body>
         </Card>
       ))}

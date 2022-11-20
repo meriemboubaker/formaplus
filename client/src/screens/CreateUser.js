@@ -9,6 +9,7 @@ import {
 const CreateUser = () => {
 
     const [userInfo , setUserInfo] = useState({})
+    const [success,setSucess] = useState(false)
     const navigate = useNavigate()
 
     const dispatch = useDispatch();
@@ -29,13 +30,14 @@ const CreateUser = () => {
         dispatch(
             postNewUser({ userInfo})
         ).then(()=>{
-            navigate("/")
+            setSucess(true)
+            navigate("/login")
         });
     };
 
     return (
 
-        <form  onSubmit={(e)=>handleSubmit(e)}>
+        <form className="container" onSubmit={(e)=>handleSubmit(e)}>
     
             <div className="mb-1 d-flex flex-column justify-content-left">
                 <label
@@ -104,7 +106,7 @@ const CreateUser = () => {
                     {errors}
                 </div>
             )}
-            {user && (
+            {success && (
                 <div className="alert alert-success" role="alert">
                     product Créé avec succés !
                 </div>
@@ -115,7 +117,7 @@ const CreateUser = () => {
                 className="btn btn-primary"
                 onClick={handleSubmit}
             >
-                Save changes
+                Create User
             </button>
         </form>
     )
